@@ -1,0 +1,77 @@
+var commander = require("commander");
+var readdir = require("fs-readdir-recursive");
+var fs = require("fs");
+var path = require("path");
+var _ = require("lodash");
+
+const {
+    tokenizer,
+    parser,
+    transformer,
+    codeGenerator,
+    compiler,
+} = require('../the-super-tiny-compiler');
+
+commander.option("-o, --out-file [out]", "Compile all input files into a single file");
+
+var pkg = require("../package.json");
+commander.version(pkg.version);
+commander.usage("[options] <files ...>");
+commander.parse(process.argv);
+
+//
+
+var errors = [];
+
+var filenames = commander.args;
+if (!filenames.length) commander.help();
+
+_.each(filenames, function (filename) {
+    if (!fs.existsSync(filename)) {
+        errors.push(filename + " doesn't exist");
+    }
+});
+
+if (commander.outFile && commander.outDir) {
+    errors.push("cannot have --out-file and --out-dir");
+}
+
+
+if (errors.length) {
+    console.error(errors.join(". "));
+    process.exit(2);
+}
+
+//
+
+// var canCompile = function (filename) {
+//     var ext = path.extname(filename);
+//     return ext === ".js" || ext === ".es6";
+// };
+
+// var readdirFilter = function (filename) {
+//     return readdir(filename).filter(canCompile);
+// };
+
+var compile = function (filename) {
+    var file = fs.readFileSync(filename).toString();
+    // const tokens =
+    // const ast =
+    // const newAst = 
+    // const output =
+    return compiler(file);
+};
+
+var data = [];
+
+_.each(filenames, function (filename) {
+    data.push(compile(filename) + "\n");
+});
+
+data = data.join("");
+
+if (commander.outFile) {
+    fs.writeFileSync(commander.outFile, data);
+} else {
+    console.log(data);
+}

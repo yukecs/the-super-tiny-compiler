@@ -3,5 +3,15 @@
   "version": "1.0.0",
   "author": "James Kyle <me@thejameskyle.com> (thejameskyle.com)",
   "license": "CC-BY-4.0",
-  "main": "./the-super-tiny-compiler.js"
+  "main": "./the-super-tiny-compiler.js",
+  "dependencies": {
+    "commander": "2.3.0",
+    "fs": "0.0.1-security",
+    "fs-readdir-recursive": "1.1.0",
+    "lodash": "4.17.21",
+    "path": "0.12.7"
+  },
+  "scripts": {
+    "dev": "node ./bin/compiler -o output input"
+  }
 }
