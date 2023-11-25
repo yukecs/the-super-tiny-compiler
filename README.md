@@ -1,45 +1,44 @@
-[![The Super Tiny Compiler](https://cloud.githubusercontent.com/assets/952783/21579290/5755288a-cf75-11e6-90e0-029529a44a38.png)](the-super-tiny-compiler.js)
+## 1.将commander框架集成到该compiler中，实现命令行控制
 
-***Welcome to The Super Tiny Compiler!***
+### 例子：
 
-This is an ultra-simplified example of all the major pieces of a modern compiler
-written in easy to read JavaScript.
+#### 将input.js进行编译，输出 output
+```node /bin/compiler -o output.js input.js```
 
-Reading through the guided code will help you learn about how *most* compilers
-work from end to end.
+#### 输出帮助
+```node /bin/compiler -h```
+```powershell
+Usage: compiler [options] <files ...>
 
-### [Want to jump into the code? Click here](the-super-tiny-compiler.js)
+  Options:
 
-### [You can also check it out on Glitch](https://the-super-tiny-compiler.glitch.me/)
+    -h, --help                  output usage information
+    -o, --out-file [out]        Compile all input files into a single file
+    -t, --tokenize-file [out]   tokenize all input files into a single file
+    -p, --parse-file [out]      parse all input files into a single file
+    -s, --transform-file [out]  transform all input files into a single file
+    -g, --generate-file [out]   generate all input files into a single file
+    -V, --version               output the version number
+```
+## 2.实现更多的命令
+```js
+commander.option("-o, --out-file [out]", "Compile all input files into a single file");
+commander.option("-t, --tokenize-file [out]", "tokenize all input files into a single file");
+commander.option("-p, --parse-file [out]", "parse all input files into a single file");
+commander.option("-s, --transform-file [out]", "transform all input files into a single file");
+commander.option("-g, --generate-file [out]", "generate all input files into a single file");
+```
 
----
+## 3.实现packjson script 快速运行
 
-### Why should I care?
-
-That's fair, most people don't really have to think about compilers in their day
-jobs. However, compilers are all around you, tons of the tools you use are based
-on concepts borrowed from compilers.
-
-### But compilers are scary!
-
-Yes, they are. But that's our fault (the people who write compilers), we've
-taken something that is reasonably straightforward and made it so scary that
-most think of it as this totally unapproachable thing that only the nerdiest of
-the nerds are able to understand.
-
-### Okay so where do I begin?
-
-Awesome! Head on over to the [the-super-tiny-compiler.js](the-super-tiny-compiler.js)
-file.
-
-### I'm back, that didn't make sense
-
-Ouch, I'm really sorry. Let me know how it can be improved.
-
-### Tests
-
-Run with `node test.js`
-
----
-
-[![cc-by-4.0](https://licensebuttons.net/l/by/4.0/80x15.png)](http://creativecommons.org/licenses/by/4.0/)
+```json
+"scripts": {
+    "dev": "node ./bin/compiler -o output input",
+    "h"  : "node ./bin/compiler -h",
+    "t"  : "node ./bin/compiler -t tokens input",
+    "p"  : "node ./bin/compiler -p ast tokens",
+    "s"  : "node ./bin/compiler -s newAst ast",
+    "g"  : "node ./bin/compiler -g output2 newAst",
+    "test" : "yarn t && yarn p && yarn s && yarn g"
+}
+```

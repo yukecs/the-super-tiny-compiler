@@ -13,6 +13,13 @@ const {
 } = require('../the-super-tiny-compiler');
 
 commander.option("-o, --out-file [out]", "Compile all input files into a single file");
+commander.option("-t, --tokenize-file [out]", "tokenize all input files into a single file");
+commander.option("-p, --parse-file [out]", "parse all input files into a single file");
+commander.option("-s, --transform-file [out]", "transform all input files into a single file");
+commander.option("-g, --generate-file [out]", "generate all input files into a single file");
+
+
+
 
 var pkg = require("../package.json");
 commander.version(pkg.version);
@@ -22,7 +29,6 @@ commander.parse(process.argv);
 //
 
 var errors = [];
-
 var filenames = commander.args;
 if (!filenames.length) commander.help();
 
@@ -53,25 +59,98 @@ if (errors.length) {
 //     return readdir(filename).filter(canCompile);
 // };
 
-var compile = function (filename) {
-    var file = fs.readFileSync(filename).toString();
-    // const tokens =
-    // const ast =
-    // const newAst = 
-    // const output =
-    return compiler(file);
-};
-
-var data = [];
-
-_.each(filenames, function (filename) {
-    data.push(compile(filename) + "\n");
-});
-
-data = data.join("");
 
 if (commander.outFile) {
+    var compile = function (filename) {
+        var file = fs.readFileSync(filename).toString();
+        // const tokens =
+        // const ast =
+        // const newAst = 
+        // const output =
+        return compiler(file);
+    };
+
+
+    var data = [];
+
+    _.each(filenames, function (filename) {
+        data.push(compile(filename) + "\n");
+    });
+
+    data = data.join("");
+
     fs.writeFileSync(commander.outFile, data);
-} else {
-    console.log(data);
+}
+
+if (commander.tokenizeFile) {
+    var tokenize = function (filename) {
+        const file = fs.readFileSync(filename).toString();
+        const tokens = tokenizer(file)
+        return JSON.stringify(tokens).toString();
+    }
+    var data = [];
+
+    _.each(filenames, function (filename) {
+        data.push(tokenize(filename) + "\n");
+    });
+
+    data = data.join("");
+
+    fs.writeFileSync(commander.tokenizeFile, data);
+}
+
+if (commander.parseFile) {
+    var parse = function (filename) {
+        const file = fs.readFileSync(filename).toString();
+        const tokens = JSON.parse(file)
+        const ast = parser(tokens)
+
+        return JSON.stringify(ast).toString();
+    }
+    var data = [];
+
+    _.each(filenames, function (filename) {
+        data.push(parse(filename) + "\n");
+    });
+
+    data = data.join("");
+
+    fs.writeFileSync(commander.parseFile, data);
+}
+
+if (commander.transformFile) {
+    var transform = function (filename) {
+        const file = fs.readFileSync(filename).toString();
+        const ast = JSON.parse(file)
+        const newAst = transformer(ast)
+
+        return JSON.stringify(newAst).toString();
+    }
+    var data = [];
+
+    _.each(filenames, function (filename) {
+        data.push(transform(filename) + "\n");
+    });
+
+    data = data.join("");
+
+    fs.writeFileSync(commander.transformFile, data);
+}
+
+if (commander.generateFile) {
+    var generate = function (filename) {
+        const file = fs.readFileSync(filename).toString();
+        const newAst = JSON.parse(file)
+        const output = codeGenerator(newAst)
+        return output;
+    }
+    var data = [];
+
+    _.each(filenames, function (filename) {
+        data.push(generate(filename) + "\n");
+    });
+
+    data = data.join("");
+
+    fs.writeFileSync(commander.generateFile, data);
 }

@@ -12,6 +12,12 @@
     "path": "0.12.7"
   },
   "scripts": {
-    "dev": "node ./bin/compiler -o output input"
+    "dev": "node ./bin/compiler -o output input",
+    "h"  : "node ./bin/compiler -h",
+    "t"  : "node ./bin/compiler -t tokens input",
+    "p"  : "node ./bin/compiler -p ast tokens",
+    "s"  : "node ./bin/compiler -s newAst ast",
+    "g"  : "node ./bin/compiler -g output2 newAst",
+    "test" : "yarn t && yarn p && yarn s && yarn g"
   }
 }
